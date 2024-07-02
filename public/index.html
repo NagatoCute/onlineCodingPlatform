@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Coding Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css">
+    <style>
+        #editor {
+            height: 300px;
+        }
+        #output {
+            height: 100px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<h1>Online Coding Platform</h1>
+<select id="language">
+    <option value="javascript">JavaScript</option>
+    <option value="python">Python</option>
+    <option value="java">Java</option>
+</select>
+<textarea id="editor"></textarea>
+<button onclick="runCode()">Run Code</button>
+<div id="output"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/mode/python/python.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/mode/clike/clike.js"></script>
+<script>
+    const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        lineNumbers: true,
+        mode: 'javascript'
+    });
+
+    document.getElementById('language').addEventListener('change', function() {
+        const language = this.value;
+        if (language === 'javascript') {
+            editor.setOption('mode', 'javascript');
+        } else if (language === 'python') {
+            editor.setOption('mode', 'python');
+        } else if (language === 'java') {
+            editor.setOption('mode', 'text/x-java');
+        }
+    });
+
+    function runCode() {
+        const code = editor.getValue();
+        const language = document.getElementById('language').value;
+
+        fetch('/run', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code, language })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText = data.output;
+            }).catch(error => {
+            document.getElementById('output').innerText = `Error: ${error}`;
+        });
+    }
+</script>
+</body>
+</html>

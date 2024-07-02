@@ -1,0 +1,4 @@
+# Dockerfile for Python
+FROM python:3.9
+WORKDIR /scripts
+CMD ["python", "script.py"]
